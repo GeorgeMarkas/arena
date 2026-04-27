@@ -1,6 +1,10 @@
 #pragma once
 
 #include <stdint.h>
+#include <stdlib.h>
+
+#define ALIGN sizeof(uintptr_t)
+#define ROUND_UP(size) (size + (ALIGN - 1) & ~(ALIGN - 1))
 
 typedef struct {
     size_t index;
@@ -37,7 +41,7 @@ void *arena_alloc(Arena *arena, size_t size);
  * allowing for reuse of the memory without freeing it.
  * @param arena The arena to be reset.
  */
-void *arena_reset(Arena *arena);
+void arena_reset(Arena *arena);
 
 /**
  * Free the memory allocated for the arena.
@@ -46,4 +50,48 @@ void *arena_reset(Arena *arena);
 void arena_destroy(Arena *arena);
 
 #ifdef ARENA_IMPLEMENTATION
+
+static Arena_Region *region_alloc(const size_t size) {
+    const size_t region_size = ROUND_UP(size);
+    Arena_Region *region = malloc(sizeof(Arena_Region) + region_size);
+    if (!region) return NULL;
+
+    region->index = 0;
+    region->size = region_size;
+    region->next = NULL;
+
+    return region;
+}
+
+Arena *arena_create(const size_t size) {
+    if (size == 0) return NULL;
+
+    Arena *arena = malloc(sizeof(Arena));
+    if (!arena) return NULL;
+
+    Arena_Region *region = region_alloc(size);
+    if (!region) return NULL;
+
+    arena->region = region;
+    arena->index = 0;
+    arena->size = ROUND_UP(size);
+
+    return arena;
+}
+
+static void arena_expand(Arena *arena) {
+    // Expansion logic
+}
+
+void *arena_alloc(Arena *arena, const size_t size) {
+    if (size == 0 || !arena || !arena->region) return NULL;
+    if (arena->size - arena->index < size) {
+        // Expand
+    }
+
+    arena->index += size;
+
+    return arena->region + (arena->index - size);
+}
+
 #endif // ARENA_IMPLEMENTATION
