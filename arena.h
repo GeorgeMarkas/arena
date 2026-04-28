@@ -2,6 +2,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef struct {
     size_t index;
@@ -12,5 +13,7 @@ typedef struct {
 Arena *arena_create(size_t size);
 
 void *arena_alloc(Arena *arena, size_t size);
+
+bool arena_resize(Arena **arena, size_t new_size);
 
 void arena_destroy(Arena *arena);

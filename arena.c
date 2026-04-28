@@ -30,6 +30,10 @@ void *arena_alloc(Arena *arena, const size_t size) {
     return ptr;
 }
 
+bool arena_resize(Arena **arena, size_t new_size) {
+    // TODO: Implement
+}
+
 void arena_destroy(Arena *arena) {
     if (!arena) return;
     free(arena);
