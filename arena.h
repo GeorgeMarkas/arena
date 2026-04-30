@@ -89,7 +89,7 @@ ARENA_DEF Arena *arena_create(size_t size) {
 }
 
 ARENA_DEF void *arena_alloc(Arena *arena, const size_t size) {
-    if (size == 0) return NULL;
+    if (size == 0 || !arena) return NULL;
 
     const size_t alloc_size = ROUND_UP(size);
     Arena_Region *current = arena->last;
@@ -131,6 +131,8 @@ ARENA_DEF void *arena_realloc(Arena *arena, void *old_ptr,
 }
 
 ARENA_DEF void arena_destroy(Arena *arena) {
+    if (!arena) return;
+
     Arena_Region *current = arena->first;
     while (current) {
         Arena_Region *temp = current;
