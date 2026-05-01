@@ -70,7 +70,7 @@ TEST(alloc_is_aligned) {
     void *p2 = arena_alloc(arena, 16);
     TEST_ASSERT_NOT_NULL(p1);
     TEST_ASSERT_NOT_NULL(p2);
-    TEST_ASSERT((uintptr_t *) p2 >= (uintptr_t *) p1 + 16);
+    TEST_ASSERT((char *) p2 >= (char *) p1 + 16);
     arena_destroy(arena);
 }
 

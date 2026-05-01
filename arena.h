@@ -102,7 +102,7 @@ ARENA_DEF void *arena_alloc(Arena *arena, const size_t size) {
         arena->last = current = region;
     }
 
-    void *ptr = &current->data[current->index];
+    void *ptr = (char *) current->data + current->index;
     arena->prev_index = current->index;
     current->index += alloc_size;
 
@@ -117,7 +117,7 @@ ARENA_DEF void *arena_realloc(Arena *arena, void *old_ptr,
     if (new_size <= old_size) return old_ptr;
     // Check if the pointer is the result of the last allocation,
     // in which case we can just increment the buffer offset.
-    if (arena->last->data + arena->prev_index == old_ptr) {
+    if ((char *) arena->last->data + arena->prev_index == old_ptr) {
         const size_t realloc_size = ROUND_UP(new_size);
         if (arena->prev_index + realloc_size <= arena->last->size) {
             arena->last->index = arena->prev_index + realloc_size;
