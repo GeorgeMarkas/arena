@@ -1,12 +1,18 @@
+TEST_DIR := tests
+
+TARGET := $(TEST_DIR)/test
+
+SRC := $(TEST_DIR)/tests.c
+
 CC 	   := gcc
-CFLAGS := -std=c11 -Wall -Wextra -Werror -pedantic -fsanitize=address
+CFLAGS := -std=c11 -Wall -Wextra -Werror -Wno-unused-parameter -pedantic -fsanitize=address
 LDLIBS := -lasan
 
 .PHONY: clean
 
-test: test.c
+$(TARGET): $(SRC)
 	$(CC) $(CFLAGS) $< -o $@
-	./test
+	$(TARGET)
 
 clean:
-	rm -f test
+	rm -f $(TEST_DIR)/test
